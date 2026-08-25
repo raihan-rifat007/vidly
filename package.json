@@ -1,0 +1,35 @@
+{
+  "name": "vidly",
+  "version": "7.7.7",
+  "description": "Download videos from TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "video-downloader",
+    "tiktok-downloader",
+    "facebook-downloader",
+    "instagram-downloader",
+    "youtube-downloader",
+    "twitter-downloader",
+    "pinterest-downloader",
+    "download-video",
+    "vidly"
+  ],
+  "author": "raihan07",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raihan-rifat007/vidly.git"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "fs-extra": "^11.2.0",
+    "request": "^2.88.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
