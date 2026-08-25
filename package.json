@@ -1,11 +1,11 @@
 {
   "name": "@raihan07/vidly",
-  "version": "7.7.7",
+  "version": "1.0.0",
   "description": "Download videos from TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
   "main": "index.js",
   "type": "commonjs",
-  "scripts": {
-    "test": "node test.js"
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "video-downloader",
@@ -15,8 +15,7 @@
     "youtube-downloader",
     "twitter-downloader",
     "pinterest-downloader",
-    "download-video",
-    "vidly"
+    "download-video"
   ],
   "author": "raihan07",
   "license": "MIT",
