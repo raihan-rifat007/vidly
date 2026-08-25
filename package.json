@@ -4,9 +4,6 @@
   "description": "Download videos and extract audio from 1000+ platforms using yt-dlp engine",
   "main": "index.js",
   "type": "commonjs",
-  "scripts": {
-    "test": "node test.js"
-  },
   "keywords": [
     "video-downloader",
     "audio-downloader",
@@ -18,16 +15,28 @@
     "instagram-downloader",
     "download-video",
     "download-audio",
-    "mp3-downloader"
+    "mp3-downloader",
+    "video-to-audio",
+    "media-downloader"
   ],
-  "author": "raihan07",
+  "author": {
+    "name": "raihan07",
+    "email": "raihan.rifat007@gmail.com",
+    "url": "https://github.com/raihan-rifat007"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/raihan-rifat007/vidly.git"
   },
+  "bugs": {
+    "url": "https://github.com/raihan-rifat007/vidly/issues"
+  },
+  "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
-    "yt-dlp-video": "^1.2.0"
+    "ytdl-core": "^4.11.5",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.2.0"
   },
   "engines": {
     "node": ">=14.0.0"
