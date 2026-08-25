@@ -1,40 +1,17 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.1.8",
+  "version": "10.2.7",
   "description": "Download videos from 1000+ platforms using Nayan API with auto-updating dependencies",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
     "update-deps": "node scripts/update-deps.js"
   },
-  "keywords": [
-    "video-downloader",
-    "nayan-api",
-    "download-video",
-    "tiktok-downloader",
-    "facebook-downloader",
-    "instagram-downloader",
-    "youtube-downloader",
-    "auto-update"
-  ],
-  "author": {
-    "name": "raihan07",
-    "email": "raihan.rifat007@gmail.com",
-    "url": "https://github.com/raihan-rifat007"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/raihan-rifat007/vidly.git"
-  },
-  "bugs": {
-    "url": "https://github.com/raihan-rifat007/vidly/issues"
-  },
-  "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
     "axios": "^1.19.0",
     "fs-extra": "^11.4.0"
   },
+  "devDependencies": {},
   "engines": {
     "node": ">=14.0.0"
   },
