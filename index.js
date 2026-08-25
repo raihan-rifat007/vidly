@@ -9,8 +9,7 @@ const CONFIG = {
   MAX_RETRIES: 2,
   QUALITY: "highest",
   PLAYER_CLIENTS: ["WEB", "TV", "ANDROID"],
-  HIGH_WATER_MARK: 1024 * 1024 * 2,
-  CHUNK_SIZE: 1024 * 1024
+  HIGH_WATER_MARK: 1024 * 1024 * 2
 };
 
 class VideoDownloader {
@@ -67,20 +66,20 @@ class VideoDownloader {
       let downloaded = 0;
       let total = format.contentLength || 0;
       let lastProgress = 0;
+      const startTime = Date.now();
 
       stream.on("data", (chunk) => {
         downloaded += chunk.length;
         if (progress) {
           const percent = total > 0 ? (downloaded / total) * 100 : 0;
           if (Math.floor(percent) > Math.floor(lastProgress)) {
-            const speed = (downloaded / 1024 / 1024 / (Date.now() - startTime) * 1000).toFixed(1);
+            const speed = (downloaded / 1024 / 1024 / ((Date.now() - startTime) / 1000)).toFixed(1);
             console.log(`Progress: ${percent.toFixed(0)}% | Speed: ${speed} MB/s`);
             lastProgress = percent;
           }
         }
       });
 
-      const startTime = Date.now();
       stream.pipe(writeStream);
 
       return new Promise((resolve, reject) => {
