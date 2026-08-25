@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.2.7",
+  "version": "10.1.8",
   "description": "Download videos from 1000+ platforms using Nayan API with auto-updating dependencies",
   "main": "index.js",
   "type": "commonjs",
