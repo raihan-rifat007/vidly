@@ -1,25 +1,16 @@
 "use strict";
 
-const { downloadVideo: ytDownload } = require('yt-dlp-video');
+const ytdl = require('ytdl-core');
 const fs = require('fs-extra');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
 const { execSync } = require('child_process');
 
 const CONFIG = {
   DEFAULT_OUTPUT: 'video.mp4',
   DEFAULT_AUDIO_OUTPUT: 'audio.mp3',
-  TIMEOUT: 60000,
-  MAX_RETRIES: 3,
   AUDIO_FORMATS: ['mp3', 'm4a', 'aac', 'flac', 'wav', 'opus'],
-  VIDEO_FORMATS: ['mp4', 'webm', 'mkv', 'avi'],
-  AUDIO_CODECS: {
-    'mp3': 'libmp3lame',
-    'm4a': 'aac',
-    'aac': 'aac',
-    'flac': 'flac',
-    'wav': 'pcm_s16le',
-    'opus': 'libopus'
-  }
+  VIDEO_FORMATS: ['mp4', 'webm', 'mkv', 'avi']
 };
 
 class VideoDownloader {
@@ -31,18 +22,14 @@ class VideoDownloader {
 
   async fetchMetadata() {
     try {
-      const info = await ytDownload(this.url, {
-        getInfo: true,
-        outputDir: path.dirname(this.outputPath),
-        filename: path.basename(this.outputPath, path.extname(this.outputPath))
-      });
+      const info = await ytdl.getInfo(this.url);
       this.metadata = {
-        title: info.title || "Downloaded Video",
-        duration: info.duration || 0,
-        thumbnail: info.thumbnail || null,
-        channel: info.channel || "Unknown",
-        views: info.views || 0,
-        likes: info.likes || 0
+        title: info.videoDetails.title || "Downloaded Video",
+        duration: parseInt(info.videoDetails.lengthSeconds) || 0,
+        channel: info.videoDetails.author?.name || "Unknown",
+        views: parseInt(info.videoDetails.viewCount) || 0,
+        likes: parseInt(info.videoDetails.likes) || 0,
+        thumbnail: info.videoDetails.thumbnails?.[0]?.url || null
       };
       return this.metadata;
     } catch (error) {
@@ -51,36 +38,48 @@ class VideoDownloader {
   }
 
   async download(options = {}) {
+    const { quality = 'highest', format = 'mp4' } = options;
+    const outputDir = path.dirname(this.outputPath);
+    await fs.ensureDir(outputDir);
+
     return new Promise((resolve, reject) => {
-      const { progress = false, quality = 'best', format = 'mp4' } = options;
-      const downloadOptions = {
-        outputDir: path.dirname(this.outputPath),
-        filename: path.basename(this.outputPath, path.extname(this.outputPath)),
+      const stream = ytdl(this.url, {
         quality: quality,
-        format: format
-      };
-      if (progress) {
-        downloadOptions.onProgress = (progressData) => {
-          console.log(`Downloading: ${progressData.percentage}% - ${progressData.speed}`);
-        };
-      }
-      ytDownload(this.url, downloadOptions)
-        .then(() => {
-          const filePath = path.resolve(this.outputPath);
-          if (fs.existsSync(filePath)) {
-            resolve({
-              title: this.metadata?.title || "Downloaded Video",
-              filePath: filePath,
-              size: fs.statSync(filePath).size,
-              duration: this.metadata?.duration || 0,
-              channel: this.metadata?.channel || "Unknown",
-              type: 'video'
-            });
-          } else {
-            reject(new Error("Download completed but file not found"));
-          }
-        })
-        .catch(reject);
+        filter: 'audioandvideo'
+      });
+
+      const writeStream = fs.createWriteStream(this.outputPath);
+      stream.pipe(writeStream);
+
+      let downloaded = 0;
+      let total = 0;
+
+      stream.on('progress', (chunkLength, downloadedBytes, totalBytes) => {
+        downloaded = downloadedBytes;
+        total = totalBytes;
+        const percent = (downloaded / total) * 100;
+        if (options.progress) {
+          console.log(`Downloading: ${percent.toFixed(1)}% - ${(downloaded / 1024 / 1024).toFixed(1)}MB / ${(total / 1024 / 1024).toFixed(1)}MB`);
+        }
+      });
+
+      writeStream.on('finish', () => {
+        if (fs.existsSync(this.outputPath)) {
+          resolve({
+            title: this.metadata?.title || "Downloaded Video",
+            filePath: this.outputPath,
+            size: fs.statSync(this.outputPath).size,
+            duration: this.metadata?.duration || 0,
+            channel: this.metadata?.channel || "Unknown",
+            type: 'video'
+          });
+        } else {
+          reject(new Error("Download completed but file not found"));
+        }
+      });
+
+      writeStream.on('error', reject);
+      stream.on('error', reject);
     });
   }
 
@@ -89,31 +88,47 @@ class VideoDownloader {
     if (!CONFIG.AUDIO_FORMATS.includes(format)) {
       throw new Error(`Unsupported audio format: ${format}. Supported: ${CONFIG.AUDIO_FORMATS.join(', ')}`);
     }
-    const videoPath = this.outputPath;
-    const audioPath = videoPath.replace(/\.[^.]+$/, `.${format}`);
-    try {
-      await this.download({ quality: 'best', progress: options.progress || false });
-      const ffmpegCmd = `ffmpeg -i "${videoPath}" -vn -acodec ${CONFIG.AUDIO_CODECS[format] || 'libmp3lame'} -ab ${bitrate} -y "${audioPath}"`;
-      try {
-        execSync(ffmpegCmd, { stdio: 'pipe' });
-      } catch (ffmpegError) {
-        throw new Error(`FFmpeg extraction failed: ${ffmpegError.message}`);
-      }
-      if (!keepVideo && fs.existsSync(videoPath)) {
-        fs.unlinkSync(videoPath);
-      }
-      return {
-        title: this.metadata?.title || "Extracted Audio",
-        filePath: audioPath,
-        size: fs.statSync(audioPath).size,
-        duration: this.metadata?.duration || 0,
-        format: format,
-        bitrate: bitrate,
-        type: 'audio'
-      };
-    } catch (error) {
-      throw new Error(`Audio extraction failed: ${error.message}`);
-    }
+
+    await this.download({ quality: 'highest', progress: options.progress || false });
+
+    const audioPath = this.outputPath.replace(/\.[^.]+$/, `.${format}`);
+
+    return new Promise((resolve, reject) => {
+      ffmpeg(this.outputPath)
+        .audioBitrate(bitrate)
+        .audioCodec(this.getAudioCodec(format))
+        .format(format)
+        .on('end', () => {
+          if (!keepVideo && fs.existsSync(this.outputPath)) {
+            fs.unlinkSync(this.outputPath);
+          }
+          resolve({
+            title: this.metadata?.title || "Extracted Audio",
+            filePath: audioPath,
+            size: fs.statSync(audioPath).size,
+            duration: this.metadata?.duration || 0,
+            format: format,
+            bitrate: bitrate,
+            type: 'audio'
+          });
+        })
+        .on('error', (err) => {
+          reject(new Error(`Audio extraction failed: ${err.message}`));
+        })
+        .save(audioPath);
+    });
+  }
+
+  getAudioCodec(format) {
+    const codecs = {
+      'mp3': 'libmp3lame',
+      'm4a': 'aac',
+      'aac': 'aac',
+      'flac': 'flac',
+      'wav': 'pcm_s16le',
+      'opus': 'libopus'
+    };
+    return codecs[format] || 'libmp3lame';
   }
 
   async process(options = {}) {
@@ -128,7 +143,7 @@ class VideoDownloader {
 
   static async downloadAudio(url, outputPath = CONFIG.DEFAULT_AUDIO_OUTPUT, options = {}) {
     const { format = 'mp3', bitrate = '192k' } = options;
-    const audioPath = outputPath.endsWith('.mp3') ? outputPath : outputPath + '.mp3';
+    const audioPath = outputPath.endsWith(`.${format}`) ? outputPath : outputPath + `.${format}`;
     const downloader = new VideoDownloader(url, audioPath);
     await downloader.fetchMetadata();
     return await downloader.extractAudio({ format, bitrate, ...options });
