@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.0.0",
+  "version": "10.1.1",
   "description": "Ultra-fast video downloader from 1000+ platforms",
   "main": "index.js",
   "type": "commonjs",
