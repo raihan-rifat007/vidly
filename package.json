@@ -1,15 +1,17 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.1.7",
-  "description": "Ultra-fast video downloader from 1000+ platforms",
+  "version": "10.1.8",
+  "description": "Download videos from 1000+ platforms using Nayan API",
   "main": "index.js",
   "type": "commonjs",
   "keywords": [
     "video-downloader",
-    "fast-download",
-    "youtube-downloader",
+    "nayan-api",
+    "download-video",
     "tiktok-downloader",
-    "audio-extractor"
+    "facebook-downloader",
+    "instagram-downloader",
+    "youtube-downloader"
   ],
   "author": {
     "name": "raihan07",
@@ -26,7 +28,8 @@
   },
   "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.12"
+    "axios": "^1.7.2",
+    "fs-extra": "^11.2.0"
   },
   "engines": {
     "node": ">=14.0.0"
