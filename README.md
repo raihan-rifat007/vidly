@@ -1,238 +1,153 @@
-# 📦 vidly
+# vidly
 
-> Download videos from TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more with a single line of code.
+> Universal video downloader for Node.js — TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more.
 
-<p align="center">
-  <img src="https://img.shields.io/npm/v/vidly" alt="npm version">
-  <img src="https://img.shields.io/npm/dt/vidly" alt="npm downloads">
-  <img src="https://img.shields.io/npm/l/vidly" alt="license">
-  <img src="https://img.shields.io/github/stars/raihan-rifat007/vidly" alt="stars">
-  <img src="https://img.shields.io/badge/node-%3E%3D12.0.0-brightgreen" alt="node version">
-</p>
+[![npm version](https://img.shields.io/npm/v/vidly?style=flat-square)](https://www.npmjs.com/package/vidly)
+[![npm downloads](https://img.shields.io/npm/dt/vidly?style=flat-square)](https://www.npmjs.com/package/vidly)
+[![license](https://img.shields.io/npm/l/vidly?style=flat-square)](LICENSE)
+[![node version](https://img.shields.io/badge/node-%3E%3D12.0.0-brightgreen?style=flat-square)](https://nodejs.org)
+[![stars](https://img.shields.io/github/stars/raihan-rifat007/vidly?style=flat-square)](https://github.com/raihan-rifat007/vidly)
+[![forks](https://img.shields.io/github/forks/raihan-rifat007/vidly?style=flat-square)](https://github.com/raihan-rifat007/vidly)
 
----
+## Overview
 
-## 📌 Overview
+vidly is a lightweight, production-grade Node.js package that enables video downloads from major social media platforms with zero configuration.
 
-**vidly** is a lightweight, zero-config Node.js package that enables you to download videos from popular social media platforms with just one line of code. Whether you're building a bot, an automation tool, or a media downloader, vidly makes video downloading effortless.
+Designed for developers building bots, automation pipelines, media tools, and web scrapers, vidly abstracts the complexity of platform-specific APIs into a single, consistent interface.
 
----
+## Features
 
-## ✨ Features
+```
 
-- ✅ **Universal Support** – TikTok, Facebook, Instagram, YouTube, Twitter (X), Pinterest, and more
-- ⚡ **One Line of Code** – Simple `async/await` API
-- 🔄 **Auto-Retry** – Built-in retry mechanism for failed downloads
-- 📁 **Custom Output** – Specify your own file path
-- 🚀 **Zero Configuration** – No API keys, no setup
-- 📦 **Lightweight** – Minimal dependencies
-- 🎯 **High Quality** – Downloads best available video quality
+▸ Universal Support    → TikTok, Facebook, Instagram, YouTube
+▸ One Line API         → Async/await with zero configuration
+▸ Auto Retry           → Built-in retry with exponential backoff
+▸ Custom Output        → User-defined file paths
+▸ High Quality         → Automatically selects best available
+▸ Lightweight          → Minimal dependencies
+▸ Type Safety          → Full JSDoc annotations
 
----
+```
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install vidly
 ```
 
----
-
-🚀 Quick Start
-
-Basic Usage
+Quick Start
 
 ```javascript
-const { downloadVideo } = require("vidly");
+const { downloadVideo } = require('vidly');
 
-async function main() {
-  const result = await downloadVideo("https://www.tiktok.com/@user/video/123456789");
-
+(async () => {
+  const result = await downloadVideo('https://www.tiktok.com/@user/video/123456789');
   console.log(result);
-  // {
-  //   title: "Amazing Video",
-  //   filePath: "./video.mp4",
-  //   size: 5242880
-  // }
+})();
+```
+
+Output:
+
+```json
+{
+  "title": "Amazing Video",
+  "filePath": "/path/to/video.mp4",
+  "size": 5242880
 }
-
-main();
 ```
 
-Custom Output Path
+API Reference
 
-```javascript
-const { downloadVideo } = require("vidly");
+downloadVideo(url, outputPath)
 
-const result = await downloadVideo(
-  "https://www.facebook.com/watch?v=123456",
-  "./downloads/my_video.mp4"
-);
+Parameter Type Required Default Description
+url string Yes — Video URL to download
+outputPath string No video.mp4 Destination file path
 
-console.log(`✅ Downloaded: ${result.title}`);
-```
-
-Using the Class API
-
-```javascript
-const { VideoDownloader } = require("vidly");
-
-const downloader = new VideoDownloader(
-  "https://www.instagram.com/p/ABC123/",
-  "./videos/instagram.mp4"
-);
-
-// Fetch metadata and download in one go
-const result = await downloader.process();
-
-// Or step by step
-await downloader.fetchMetadata();
-console.log(downloader.metadata.title);
-await downloader.download();
-```
-
----
-
-📚 API Reference
-
-downloadVideo(url, outputPath?)
-
-Downloads a video from the given URL.
-
-Parameter Type Description
-url string Video URL to download
-outputPath string (Optional) Output file path. Default: video.mp4
-
-Returns: Promise<Object>
+Returns: Promise<VideoResult>
 
 ```typescript
-{
+interface VideoResult {
   title: string;    // Video title
-  filePath: string; // Absolute path to downloaded file
+  filePath: string; // Absolute path to file
   size: number;     // File size in bytes
 }
 ```
 
-VideoDownloader Class
+Advanced Usage
 
-Method Description
-fetchMetadata() Fetches video information without downloading
-download() Downloads the video using stored metadata
-process() Fetches metadata and downloads in one call
-
-Properties:
-
-· metadata – Object containing title, highQuality, lowQuality
-· downloadUrl – The actual video URL
-
----
-
-🛠️ Error Handling
+Class-Based Approach
 
 ```javascript
-const { downloadVideo } = require("vidly");
+const { VideoDownloader } = require('vidly');
 
+const downloader = new VideoDownloader(
+  'https://www.instagram.com/p/ABC123/',
+  './custom/output.mp4'
+);
+
+await downloader.fetchMetadata();
+await downloader.download();
+
+console.log(downloader.metadata.title);
+```
+
+Error Handling
+
+```javascript
 try {
-  const result = await downloadVideo("invalid-url");
+  const result = await downloadVideo(url);
 } catch (error) {
-  console.error("❌", error.message);
+  console.error(`[vidly] ${error.message}`);
 }
 ```
 
-Common Errors:
-
-Error Cause
-No URL provided Empty URL passed
-No video data found Invalid or unsupported URL
-No downloadable video URL found Video not available
-Download failed with status 404 Video removed or private
-
----
-
-📱 Supported Platforms
+Supported Platforms
 
 Platform Status
-TikTok ✅ Full Support
-Facebook ✅ Full Support
-Instagram ✅ Full Support
-YouTube ✅ Full Support
-Twitter / X ✅ Full Support
-Pinterest ✅ Full Support
-More Coming Soon 🚧 In Development
+TikTok ✓
+Facebook ✓
+Instagram ✓
+YouTube ✓
+Twitter/X ✓
+Pinterest ✓
 
----
+Error Codes
 
-💻 Development
+Code Description
+E001 No URL provided
+E002 No video data found
+E003 No downloadable URL available
+E004 Download failed (HTTP 4xx/5xx)
 
-Clone Repository
+Development
 
 ```bash
 git clone https://github.com/raihan-rifat007/vidly.git
 cd vidly
 npm install
-```
-
-Run Tests
-
-```bash
 npm test
 ```
 
-Build
-
-```bash
-npm run build
-```
-
----
-
-🤝 Contributing
+Contributing
 
 1. Fork the repository
-2. Create your feature branch (git checkout -b feature/amazing)
-3. Commit your changes (git commit -m 'Add amazing feature')
-4. Push to the branch (git push origin feature/amazing)
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
 5. Open a Pull Request
 
----
+License
 
-📄 License
+MIT © raihan07
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Connect
 
----
-
-👤 Author
-
-raihan07
-
-· GitHub: @raihan-rifat007
-· npm: raihan07
+GitHub  : https://github.com/raihan-rifat007
+npm     : https://www.npmjs.com/~raihan07
+Issues  : https://github.com/raihan-rifat007/vidly/issues
+Email   : raihan.rifat007@gmail.com
 
 ---
 
-🙏 Support
-
-If you find this package useful, please consider:
-
-· ⭐ Starring the repository on GitHub
-· 📦 Sharing it with other developers
-· 🐛 Reporting issues
-· 🔧 Contributing code
-
----
-
-📊 Statistics
-
-<p align="center">
-  <img src="https://img.shields.io/npm/v/vidly" alt="version">
-  <img src="https://img.shields.io/npm/dt/vidly" alt="downloads">
-  <img src="https://img.shields.io/github/stars/raihan-rifat007/vidly" alt="stars">
-  <img src="https://img.shields.io/github/forks/raihan-rifat007/vidly" alt="forks">
-</p>
-
----
-
-Made with ❤️ by raihan07
-
-```
+Built for developers, by raihan.
