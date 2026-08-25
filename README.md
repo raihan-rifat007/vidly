@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/npm/l/vidly?style=for-the-badge&logo=opensourceinitiative&logoColor=white&color=3DA639" alt="license">
   </a>
   <a href="https://nodejs.org">
-    <img src="https://img.shields.io/badge/node-%3E%3D12.0.0-brightgreen?style=for-the-badge&logo=node.js&logoColor=white&color=339933" alt="node version">
+    <img src="https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=for-the-badge&logo=node.js&logoColor=white&color=339933" alt="node version">
   </a>
   <br>
   <a href="https://github.com/raihan-rifat007/vidly">
@@ -52,6 +52,7 @@ Designed for developers building bots, automation pipelines, media tools, and we
 | **Lightweight** | Minimal dependencies for fast installation and low overhead |
 | **Type Safety** | Full JSDoc annotations for intelligent editor autocompletion |
 | **Error Handling** | Comprehensive error codes and descriptive error messages |
+| **Auto-Update** | Dependencies update automatically via GitHub Actions |
 
 ---
 
