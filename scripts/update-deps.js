@@ -1,19 +1,28 @@
 const fs = require("fs");
 const path = require("path");
-const axios = require("axios");
+const https = require("https");
 const { execSync } = require("child_process");
 
 const DEPENDENCIES = ["axios", "fs-extra"];
 
-async function getLatestVersion(pkg) {
-  try {
+function fetchLatestVersion(pkg) {
+  return new Promise((resolve, reject) => {
     const url = `https://registry.npmjs.org/${pkg}/latest`;
-    const response = await axios.get(url);
-    return response.data.version;
-  } catch (error) {
-    console.error(`Failed to fetch version for ${pkg}:`, error.message);
-    return null;
-  }
+    https.get(url, (res) => {
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => {
+        try {
+          const json = JSON.parse(data);
+          resolve(json.version);
+        } catch {
+          reject(new Error(`Failed to parse response for ${pkg}`));
+        }
+      });
+    }).on("error", (err) => {
+      reject(err);
+    });
+  });
 }
 
 async function updatePackageJson() {
@@ -24,18 +33,20 @@ async function updatePackageJson() {
   console.log("Checking for dependency updates...");
 
   for (const dep of DEPENDENCIES) {
-    const latestVersion = await getLatestVersion(dep);
-    if (!latestVersion) continue;
-
-    const currentVersion = pkg.dependencies?.[dep];
-    if (currentVersion && currentVersion.replace(/^[\^~]/, "") !== latestVersion) {
-      console.log(`Updating ${dep}: ${currentVersion} → ${latestVersion}`);
-      if (pkg.dependencies) {
-        pkg.dependencies[dep] = `^${latestVersion}`;
+    try {
+      const latestVersion = await fetchLatestVersion(dep);
+      const currentVersion = pkg.dependencies?.[dep];
+      if (currentVersion && currentVersion.replace(/^[\^~]/, "") !== latestVersion) {
+        console.log(`Updating ${dep}: ${currentVersion} → ${latestVersion}`);
+        if (pkg.dependencies) {
+          pkg.dependencies[dep] = `^${latestVersion}`;
+        }
+        updated = true;
+      } else {
+        console.log(`${dep} is up to date (${latestVersion})`);
       }
-      updated = true;
-    } else {
-      console.log(`${dep} is up to date (${latestVersion})`);
+    } catch (error) {
+      console.error(`Failed to fetch version for ${dep}:`, error.message);
     }
   }
 
