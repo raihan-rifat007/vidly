@@ -1,4 +1,4 @@
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { execSync } = require("child_process");
@@ -18,7 +18,7 @@ async function getLatestVersion(pkg) {
 
 async function updatePackageJson() {
   const pkgPath = path.join(process.cwd(), "package.json");
-  const pkg = await fs.readJson(pkgPath);
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
   let updated = false;
 
   console.log("Checking for dependency updates...");
@@ -40,7 +40,7 @@ async function updatePackageJson() {
   }
 
   if (updated) {
-    await fs.writeJson(pkgPath, pkg, { spaces: 2 });
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
     console.log("package.json updated!");
 
     try {
