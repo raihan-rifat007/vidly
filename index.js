@@ -1,113 +1,148 @@
 "use strict";
 
-const fs = require("fs-extra");
-const axios = require("axios");
-const request = require("request");
-const path = require("path");
+const { downloadVideo: ytDownload } = require('yt-dlp-video');
+const fs = require('fs-extra');
+const path = require('path');
+const { execSync } = require('child_process');
 
 const CONFIG = {
-  API_URL: "https://nayan-video-downloader.vercel.app/alldown",
-  DEFAULT_OUTPUT: "video.mp4",
-  TIMEOUT: 30000,
-  MAX_RETRIES: 3
+  DEFAULT_OUTPUT: 'video.mp4',
+  DEFAULT_AUDIO_OUTPUT: 'audio.mp3',
+  TIMEOUT: 60000,
+  MAX_RETRIES: 3,
+  AUDIO_FORMATS: ['mp3', 'm4a', 'aac', 'flac', 'wav', 'opus'],
+  VIDEO_FORMATS: ['mp4', 'webm', 'mkv', 'avi'],
+  AUDIO_CODECS: {
+    'mp3': 'libmp3lame',
+    'm4a': 'aac',
+    'aac': 'aac',
+    'flac': 'flac',
+    'wav': 'pcm_s16le',
+    'opus': 'libopus'
+  }
 };
 
 class VideoDownloader {
   constructor(url, outputPath = CONFIG.DEFAULT_OUTPUT) {
     this.url = url;
     this.outputPath = path.resolve(outputPath);
-    this.apiUrl = `${CONFIG.API_URL}?url=${encodeURIComponent(url)}`;
     this.metadata = null;
-    this.downloadUrl = null;
   }
 
   async fetchMetadata() {
     try {
-      const response = await axios.get(this.apiUrl, {
-        timeout: CONFIG.TIMEOUT
+      const info = await ytDownload(this.url, {
+        getInfo: true,
+        outputDir: path.dirname(this.outputPath),
+        filename: path.basename(this.outputPath, path.extname(this.outputPath))
       });
-
-      if (!response.data?.data) {
-        throw new Error("No video data found for the provided URL.");
-      }
-
-      const { title, high, low } = response.data.data;
       this.metadata = {
-        title: title || "Downloaded Video",
-        highQuality: high || null,
-        lowQuality: low || null
+        title: info.title || "Downloaded Video",
+        duration: info.duration || 0,
+        thumbnail: info.thumbnail || null,
+        channel: info.channel || "Unknown",
+        views: info.views || 0,
+        likes: info.likes || 0
       };
-
-      this.downloadUrl = this.metadata.highQuality || this.metadata.lowQuality;
-
-      if (!this.downloadUrl) {
-        throw new Error("No downloadable video URL found.");
-      }
-
       return this.metadata;
     } catch (error) {
       throw new Error(`Failed to fetch video metadata: ${error.message}`);
     }
   }
 
-  async download() {
-    if (!this.downloadUrl) {
-      await this.fetchMetadata();
-    }
-
+  async download(options = {}) {
     return new Promise((resolve, reject) => {
-      const writeStream = fs.createWriteStream(this.outputPath);
-      let retryCount = 0;
-
-      const attemptDownload = () => {
-        const downloadRequest = request(this.downloadUrl);
-
-        downloadRequest.on("response", (response) => {
-          if (response.statusCode === 404 || response.statusCode === 403) {
-            reject(new Error(`Download failed with status ${response.statusCode}`));
-          }
-        });
-
-        downloadRequest
-          .pipe(writeStream)
-          .on("close", () => {
-            if (fs.existsSync(this.outputPath)) {
-              resolve({
-                title: this.metadata.title,
-                filePath: this.outputPath,
-                size: fs.statSync(this.outputPath).size
-              });
-            } else {
-              reject(new Error("Download completed but file not found"));
-            }
-          })
-          .on("error", (err) => {
-            if (retryCount < CONFIG.MAX_RETRIES) {
-              retryCount++;
-              console.log(`Retry ${retryCount}/${CONFIG.MAX_RETRIES}...`);
-              setTimeout(attemptDownload, 1000 * retryCount);
-            } else {
-              reject(new Error(`Download failed after ${CONFIG.MAX_RETRIES} attempts: ${err.message}`));
-            }
-          });
+      const { progress = false, quality = 'best', format = 'mp4' } = options;
+      const downloadOptions = {
+        outputDir: path.dirname(this.outputPath),
+        filename: path.basename(this.outputPath, path.extname(this.outputPath)),
+        quality: quality,
+        format: format
       };
-
-      attemptDownload();
+      if (progress) {
+        downloadOptions.onProgress = (progressData) => {
+          console.log(`Downloading: ${progressData.percentage}% - ${progressData.speed}`);
+        };
+      }
+      ytDownload(this.url, downloadOptions)
+        .then(() => {
+          const filePath = path.resolve(this.outputPath);
+          if (fs.existsSync(filePath)) {
+            resolve({
+              title: this.metadata?.title || "Downloaded Video",
+              filePath: filePath,
+              size: fs.statSync(filePath).size,
+              duration: this.metadata?.duration || 0,
+              channel: this.metadata?.channel || "Unknown",
+              type: 'video'
+            });
+          } else {
+            reject(new Error("Download completed but file not found"));
+          }
+        })
+        .catch(reject);
     });
   }
 
-  async process() {
-    await this.fetchMetadata();
-    return await this.download();
+  async extractAudio(options = {}) {
+    const { format = 'mp3', bitrate = '192k', keepVideo = false } = options;
+    if (!CONFIG.AUDIO_FORMATS.includes(format)) {
+      throw new Error(`Unsupported audio format: ${format}. Supported: ${CONFIG.AUDIO_FORMATS.join(', ')}`);
+    }
+    const videoPath = this.outputPath;
+    const audioPath = videoPath.replace(/\.[^.]+$/, `.${format}`);
+    try {
+      await this.download({ quality: 'best', progress: options.progress || false });
+      const ffmpegCmd = `ffmpeg -i "${videoPath}" -vn -acodec ${CONFIG.AUDIO_CODECS[format] || 'libmp3lame'} -ab ${bitrate} -y "${audioPath}"`;
+      try {
+        execSync(ffmpegCmd, { stdio: 'pipe' });
+      } catch (ffmpegError) {
+        throw new Error(`FFmpeg extraction failed: ${ffmpegError.message}`);
+      }
+      if (!keepVideo && fs.existsSync(videoPath)) {
+        fs.unlinkSync(videoPath);
+      }
+      return {
+        title: this.metadata?.title || "Extracted Audio",
+        filePath: audioPath,
+        size: fs.statSync(audioPath).size,
+        duration: this.metadata?.duration || 0,
+        format: format,
+        bitrate: bitrate,
+        type: 'audio'
+      };
+    } catch (error) {
+      throw new Error(`Audio extraction failed: ${error.message}`);
+    }
   }
 
-  static async downloadVideo(url, outputPath = CONFIG.DEFAULT_OUTPUT) {
+  async process(options = {}) {
+    await this.fetchMetadata();
+    return await this.download(options);
+  }
+
+  static async downloadVideo(url, outputPath = CONFIG.DEFAULT_OUTPUT, options = {}) {
     const downloader = new VideoDownloader(url, outputPath);
-    return await downloader.process();
+    return await downloader.process(options);
+  }
+
+  static async downloadAudio(url, outputPath = CONFIG.DEFAULT_AUDIO_OUTPUT, options = {}) {
+    const { format = 'mp3', bitrate = '192k' } = options;
+    const audioPath = outputPath.endsWith('.mp3') ? outputPath : outputPath + '.mp3';
+    const downloader = new VideoDownloader(url, audioPath);
+    await downloader.fetchMetadata();
+    return await downloader.extractAudio({ format, bitrate, ...options });
+  }
+
+  static async getInfo(url) {
+    const downloader = new VideoDownloader(url);
+    return await downloader.fetchMetadata();
   }
 }
 
 module.exports = {
   VideoDownloader,
-  downloadVideo: VideoDownloader.downloadVideo
+  downloadVideo: VideoDownloader.downloadVideo,
+  downloadAudio: VideoDownloader.downloadAudio,
+  getInfo: VideoDownloader.getInfo
 };
