@@ -1,9 +1,12 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.1.8",
-  "description": "Download videos from 1000+ platforms using Nayan API",
+  "version": "10.2.7",
+  "description": "Download videos from 1000+ platforms using Nayan API with auto-updating dependencies",
   "main": "index.js",
   "type": "commonjs",
+  "scripts": {
+    "update-deps": "node scripts/update-deps.js"
+  },
   "keywords": [
     "video-downloader",
     "nayan-api",
@@ -11,7 +14,8 @@
     "tiktok-downloader",
     "facebook-downloader",
     "instagram-downloader",
-    "youtube-downloader"
+    "youtube-downloader",
+    "auto-update"
   ],
   "author": {
     "name": "raihan07",
