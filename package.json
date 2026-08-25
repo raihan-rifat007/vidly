@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.2.9",
+  "version": "10.3.0",
   "description": "Ultra-fast video downloader with auto-updating dependencies — supports TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
   "main": "index.js",
   "type": "commonjs",
