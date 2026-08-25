@@ -1,0 +1,13 @@
+node_modules/
+.env
+*.log
+.DS_Store
+*.mp4
+*.mp3
+*.png
+*.jpg
+*.jpeg
+downloads/
+cache/
+*.lock
+*.tgz
