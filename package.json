@@ -1,42 +1,23 @@
 {
   "name": "@raihan07/vidly",
-  "version": "9.0.0",
-  "description": "Download videos and extract audio from 1000+ platforms using yt-dlp engine",
+  "version": "10.0.0",
+  "description": "Ultra-fast video downloader from 1000+ platforms",
   "main": "index.js",
   "type": "commonjs",
   "keywords": [
     "video-downloader",
-    "audio-downloader",
-    "audio-extractor",
-    "yt-dlp",
+    "fast-download",
     "youtube-downloader",
-    "tiktok-downloader",
-    "facebook-downloader",
-    "instagram-downloader",
-    "download-video",
-    "download-audio",
-    "mp3-downloader",
-    "video-to-audio",
-    "media-downloader"
+    "tiktok-downloader"
   ],
-  "author": {
-    "name": "raihan07",
-    "email": "raihan.rifat007@gmail.com",
-    "url": "https://github.com/raihan-rifat007"
-  },
+  "author": "raihan07",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/raihan-rifat007/vidly.git"
   },
-  "bugs": {
-    "url": "https://github.com/raihan-rifat007/vidly/issues"
-  },
-  "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
-    "ytdl-core": "^4.11.5",
-    "fluent-ffmpeg": "^2.1.2",
-    "fs-extra": "^11.2.0"
+    "@distube/ytdl-core": "^4.15.0"
   },
   "engines": {
     "node": ">=14.0.0"
