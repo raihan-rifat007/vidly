@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "10.1.1",
+  "version": "10.1.2",
   "description": "Ultra-fast video downloader from 1000+ platforms",
   "main": "index.js",
   "type": "commonjs",
@@ -17,7 +17,7 @@
     "url": "https://github.com/raihan-rifat007/vidly.git"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.15.0"
+    "@distube/ytdl-core": "^4.16.12"
   },
   "engines": {
     "node": ">=14.0.0"
