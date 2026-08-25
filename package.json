@@ -1,6 +1,6 @@
 {
-  "name": "vidly",
-  "version": "7.7.0",
+  "name": "@raihan07/vidly",
+  "version": "7.7.7",
   "description": "Download videos from TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
   "main": "index.js",
   "type": "commonjs",
