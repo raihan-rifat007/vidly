@@ -1,21 +1,24 @@
 {
   "name": "@raihan07/vidly",
-  "version": "1.0.0",
-  "description": "Download videos from TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
+  "version": "9.0.0",
+  "description": "Download videos and extract audio from 1000+ platforms using yt-dlp engine",
   "main": "index.js",
   "type": "commonjs",
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "test": "node test.js"
   },
   "keywords": [
     "video-downloader",
+    "audio-downloader",
+    "audio-extractor",
+    "yt-dlp",
+    "youtube-downloader",
     "tiktok-downloader",
     "facebook-downloader",
     "instagram-downloader",
-    "youtube-downloader",
-    "twitter-downloader",
-    "pinterest-downloader",
-    "download-video"
+    "download-video",
+    "download-audio",
+    "mp3-downloader"
   ],
   "author": "raihan07",
   "license": "MIT",
@@ -24,11 +27,9 @@
     "url": "https://github.com/raihan-rifat007/vidly.git"
   },
   "dependencies": {
-    "axios": "^1.7.2",
-    "fs-extra": "^11.2.0",
-    "request": "^2.88.2"
+    "yt-dlp-video": "^1.2.0"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14.0.0"
   }
 }
