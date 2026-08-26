@@ -1,7 +1,7 @@
 {
   "name": "@raihan07/vidly",
-  "version": "11.7.9",
-  "description": "Ultra-fast video downloader with auto-updating dependencies — supports TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
+  "version": "11.1.1",
+  "description": "Video downloader powered by PrimeDownloader API — supports YouTube, Facebook, Instagram, TikTok and more",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -10,25 +10,13 @@
   },
   "keywords": [
     "video-downloader",
-    "audio-downloader",
-    "media-downloader",
-    "nayan-api",
-    "tiktok-downloader",
+    "primedownloader",
+    "youtube-downloader",
     "facebook-downloader",
     "instagram-downloader",
-    "youtube-downloader",
-    "twitter-downloader",
-    "pinterest-downloader",
+    "tiktok-downloader",
     "download-video",
-    "download-audio",
-    "auto-update",
-    "cli-tool",
-    "nodejs",
-    "npm-package",
-    "streaming",
-    "scraper",
-    "social-media",
-    "content-downloader"
+    "media-downloader"
   ],
   "author": {
     "name": "raihan07",
@@ -38,49 +26,21 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raihan-rifat007/vidly.git",
-    "directory": "packages/vidly"
+    "url": "https://github.com/raihan-rifat007/vidly.git"
   },
   "bugs": {
     "url": "https://github.com/raihan-rifat007/vidly/issues",
-    "email": "raihanrifat9721@gmail.com"
+    "email": "raihan.rifat007@gmail.com"
   },
   "homepage": "https://github.com/raihan-rifat007/vidly#readme",
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/raihan-rifat007"
-  },
   "dependencies": {
     "axios": "^1.19.0",
     "fs-extra": "^11.4.0"
   },
-  "devDependencies": {},
-  "peerDependencies": {
+  "engines": {
     "node": ">=14.0.0"
   },
-  "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
-  },
-  "os": ["linux", "darwin", "win32"],
-  "cpu": ["x64", "arm64"],
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
-  },
-  "files": [
-    "index.js",
-    "scripts/",
-    "README.md",
-    "LICENSE"
-  ],
-  "sideEffects": false,
-  "packageManager": "npm@10.8.2",
-  "contributors": [
-    {
-      "name": "raihan07",
-      "email": "raihanrifat9721@gmail.com",
-      "url": "https://github.com/raihan-rifat007"
-    }
-  ]
-    }
+    "access": "public"
+  }
+}
