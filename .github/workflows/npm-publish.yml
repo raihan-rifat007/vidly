@@ -26,9 +26,6 @@ jobs:
           node-version: '20'
           registry-url: https://registry.npmjs.org
 
-      - name: Update Dependencies
-        run: node scripts/update-deps.js
-
       - name: Install Dependencies
         run: npm install
 
