@@ -1,40 +1,24 @@
 {
   "name": "@raihan07/vidly",
-  "version": "11.1.2",
-  "description": "Video downloader powered by PrimeDownloader API — supports YouTube, Facebook, Instagram, TikTok and more",
+  "version": "11.1.3",
+  "description": "Video downloader with 1080p quality and audio support",
   "main": "index.js",
   "type": "commonjs",
-  "scripts": {
-    "update-deps": "node scripts/update-deps.js",
-    "prepublishOnly": "npm run update-deps"
-  },
   "keywords": [
     "video-downloader",
-    "primedownloader",
+    "1080p",
     "youtube-downloader",
-    "facebook-downloader",
-    "instagram-downloader",
-    "tiktok-downloader",
-    "download-video",
-    "media-downloader"
+    "audio",
+    "distube"
   ],
-  "author": {
-    "name": "raihan07",
-    "email": "raihanrifat9721@gmail.com",
-    "url": "https://github.com/raihan-rifat007"
-  },
+  "author": "raihan07",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/raihan-rifat007/vidly.git"
   },
-  "bugs": {
-    "url": "https://github.com/raihan-rifat007/vidly/issues",
-    "email": "raihanrifat9721@gmail.com"
-  },
-  "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
-    "axios": "^1.19.0",
+    "@distube/ytdl-core": "^4.16.12",
     "fs-extra": "^11.4.0"
   },
   "engines": {
