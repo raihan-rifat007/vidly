@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "11.1.1",
+  "version": "11.1.2",
   "description": "Video downloader powered by PrimeDownloader API — supports YouTube, Facebook, Instagram, TikTok and more",
   "main": "index.js",
   "type": "commonjs",
@@ -20,7 +20,7 @@
   ],
   "author": {
     "name": "raihan07",
-    "email": "raihan.rifat007@gmail.com",
+    "email": "raihanrifat9721@gmail.com",
     "url": "https://github.com/raihan-rifat007"
   },
   "license": "MIT",
@@ -30,7 +30,7 @@
   },
   "bugs": {
     "url": "https://github.com/raihan-rifat007/vidly/issues",
-    "email": "raihan.rifat007@gmail.com"
+    "email": "raihanrifat9721@gmail.com"
   },
   "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
