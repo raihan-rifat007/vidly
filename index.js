@@ -1,6 +1,6 @@
 "use strict";
 
-const untube = require("untube");
+const untube = require("untube").default || require("untube");
 const fs = require("fs-extra");
 const path = require("path");
 
