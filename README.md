@@ -1,98 +1,85 @@
-<div align="center">
+# vidly
 
-# 🎬 vidly
-
-### Universal Video Downloader for Node.js
-
-**TikTok · Facebook · Instagram · YouTube · Twitter · Pinterest · and more**
-
-[![npm version](https://img.shields.io/npm/v/vidly?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/vidly)
-[![npm downloads](https://img.shields.io/npm/dt/vidly?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/vidly)
-[![license](https://img.shields.io/npm/l/vidly?style=flat-square&logo=opensourceinitiative&logoColor=white&color=3DA639)](LICENSE)
-[![node version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=flat-square&logo=node.js&logoColor=white&color=339933)](https://nodejs.org)
-[![stars](https://img.shields.io/github/stars/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly)
-[![forks](https://img.shields.io/github/forks/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly)
-[![issues](https://img.shields.io/github/issues/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly/issues)
-[![build](https://img.shields.io/github/actions/workflow/status/raihan-rifat007/vidly/npm-publish.yml?style=flat-square&logo=githubactions&logoColor=white&color=2088FF)](https://github.com/raihan-rifat007/vidly/actions)
-
-</div>
+> Universal video downloader for Node.js — TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more.
 
 ---
 
-## 📋 Table of Contents
+## Badges
 
-- [Overview](#-overview)
-- [Why vidly](#-why-vidly)
-- [Features](#-features)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [API Reference](#-api-reference)
-- [Advanced Usage](#-advanced-usage)
-- [Supported Platforms](#-supported-platforms)
-- [Error Handling](#-error-handling)
-- [Error Codes](#-error-codes)
-- [Development](#-development)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Connect](#-connect)
+| Badge | Status |
+|-------|--------|
+| npm version | [![npm version](https://img.shields.io/npm/v/vidly?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/vidly) |
+| npm downloads | [![npm downloads](https://img.shields.io/npm/dt/vidly?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/vidly) |
+| license | [![license](https://img.shields.io/npm/l/vidly?style=flat-square&logo=opensourceinitiative&logoColor=white&color=3DA639)](LICENSE) |
+| node version | [![node version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=flat-square&logo=node.js&logoColor=white&color=339933)](https://nodejs.org) |
+| stars | [![stars](https://img.shields.io/github/stars/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly) |
+| forks | [![forks](https://img.shields.io/github/forks/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly) |
+| issues | [![issues](https://img.shields.io/github/issues/raihan-rifat007/vidly?style=flat-square&logo=github&logoColor=white&color=181717)](https://github.com/raihan-rifat007/vidly/issues) |
+| build | [![build](https://img.shields.io/github/actions/workflow/status/raihan-rifat007/vidly/npm-publish.yml?style=flat-square&logo=githubactions&logoColor=white&color=2088FF)](https://github.com/raihan-rifat007/vidly/actions) |
 
 ---
 
-## 🚀 Overview
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Installation](#installation)
+4. [Quick Start](#quick-start)
+5. [API Reference](#api-reference)
+6. [Advanced Usage](#advanced-usage)
+7. [Supported Platforms](#supported-platforms)
+8. [Error Handling](#error-handling)
+9. [Error Codes](#error-codes)
+10. [Development](#development)
+11. [Contributing](#contributing)
+12. [License](#license)
+13. [Connect](#connect)
+
+---
+
+## Overview
 
 **vidly** is a lightweight, production-grade Node.js package that enables video downloads from major social media platforms with zero configuration.
 
-Designed for developers building bots, automation pipelines, media tools, and web scrapers, vidly abstracts the complexity of platform-specific APIs into a single, consistent interface. Simply pass a URL, and vidly handles the rest — fetching metadata, selecting the best available quality, and downloading the video to your specified location.
+Designed for developers building automation pipelines, media tools, bots, and web scrapers, vidly abstracts platform-specific API complexity into a single, consistent interface. Pass a URL, and vidly handles metadata fetching, quality selection, and file download operations.
 
-### Key Capabilities
+### Architecture Principles
 
-- **Zero Configuration** — No API keys, no tokens, no setup required
-- **Consistent Interface** — Same simple API for all platforms
-- **Production Ready** — Built with robust error handling and retry logic
-- **Active Maintenance** — Regular updates for platform changes
-
----
-
-## ✨ Why vidly?
-
-| Challenge | vidly Solution |
-|-----------|----------------|
-| Platform-specific APIs | Single unified interface |
-| Complex authentication | No authentication needed |
-| Different response formats | Consistent output structure |
-| Manual quality selection | Automatic best quality |
-| No retry mechanisms | Built-in exponential backoff |
-| No TypeScript support | Full JSDoc type annotations |
+- **Zero Configuration** — No API keys, tokens, or environment variables required
+- **Consistent Interface** — Unified API across all supported platforms
+- **Production Ready** — Comprehensive error handling with exponential backoff retry logic
+- **Active Maintenance** — Regular updates for platform API changes
+- **Type Safety** — Full JSDoc annotations for intelligent editor autocompletion
 
 ---
 
-## ⚡ Features
+## Features
 
 ### Core Features
 
 | Feature | Description |
 |---------|-------------|
-| **Universal Support** | TikTok, Facebook, Instagram, YouTube, Twitter/X, Pinterest, and more |
-| **One-Line API** | Simple `async/await` interface with zero configuration |
-| **Auto Retry** | Built-in exponential backoff retry mechanism for failed downloads |
-| **Custom Output** | User-defined file paths with automatic directory creation |
-| **High Quality** | Automatically selects the best available video quality |
+| **Universal Platform Support** | TikTok, Facebook, Instagram, YouTube, Twitter/X, Pinterest |
+| **Simplified API** | Async/await interface with zero configuration overhead |
+| **Automatic Retry** | Exponential backoff retry mechanism for transient failures |
+| **Custom Output Paths** | User-defined file destinations with automatic directory creation |
+| **Optimal Quality Selection** | Automatic selection of highest available video quality |
 
 ### Technical Features
 
 | Feature | Description |
 |---------|-------------|
-| **Lightweight** | Minimal dependencies for fast installation and low overhead |
-| **Type Safety** | Full JSDoc annotations for intelligent editor autocompletion |
-| **Error Handling** | Comprehensive error codes and descriptive error messages |
-| **Auto-Update** | Dependencies update automatically via GitHub Actions |
-| **ESM Support** | Compatible with CommonJS and ES Modules |
-| **Stream Support** | Download videos as streams for advanced use cases |
-| **Progress Tracking** | Optional progress callbacks for large downloads |
+| **Minimal Dependencies** | Lightweight footprint for fast installation and low overhead |
+| **JSDoc Type Safety** | Full type annotations for intelligent autocompletion |
+| **Comprehensive Error Codes** | Descriptive error messages with actionable solutions |
+| **Automated Dependency Updates** | GitHub Actions for dependency management |
+| **ESM and CommonJS Support** | Dual module format compatibility |
+| **Stream API** | Download videos as streams for advanced use cases |
+| **Progress Callbacks** | Optional progress tracking for large downloads |
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### NPM
 
@@ -114,9 +101,9 @@ pnpm add vidly
 
 ---
 
-🎯 Quick Start
+Quick Start
 
-Basic Usage
+CommonJS
 
 ```javascript
 const { downloadVideo } = require('vidly');
@@ -127,7 +114,16 @@ const { downloadVideo } = require('vidly');
 })();
 ```
 
-Output
+ES Module
+
+```javascript
+import { downloadVideo } from 'vidly';
+
+const result = await downloadVideo('https://www.instagram.com/p/ABC123/');
+console.log(result);
+```
+
+Output Structure
 
 ```json
 {
@@ -140,48 +136,39 @@ Output
 }
 ```
 
-ES Module
-
-```javascript
-import { downloadVideo } from 'vidly';
-
-const result = await downloadVideo('https://www.instagram.com/p/ABC123/');
-console.log(result);
-```
-
 ---
 
-📚 API Reference
+API Reference
 
 downloadVideo(url, outputPath)
 
-Downloads a video from the given URL.
+Downloads a video from the specified URL.
 
 Parameter Type Required Default Description
-url string ✅ Yes — Video URL to download
-outputPath string ❌ No video.mp4 Destination file path
+url string Yes — Video URL to download
+outputPath string No video.mp4 Destination file path
 
 Returns: Promise<VideoResult>
 
 ```typescript
 interface VideoResult {
-  title: string;      // Video title
-  filePath: string;   // Absolute path to downloaded file
-  size: number;       // File size in bytes
-  duration?: number;  // Video duration in seconds
-  thumbnail?: string; // Thumbnail URL
-  platform?: string;  // Platform name
+  title: string;
+  filePath: string;
+  size: number;
+  duration?: number;
+  thumbnail?: string;
+  platform?: string;
 }
 ```
 
 VideoDownloader Class
 
-For more granular control, use the class-based API.
+Provides granular control over the download process.
 
 Method Description
-fetchMetadata() Fetches video information without downloading
-download() Downloads the video using stored metadata
-process() Fetches metadata and downloads in one call
+fetchMetadata() Retrieves video information without downloading
+download() Downloads video using stored metadata
+process() Combines metadata fetch and download operations
 
 Properties:
 
@@ -191,7 +178,7 @@ downloadUrl string The actual video URL
 
 ---
 
-🔧 Advanced Usage
+Advanced Usage
 
 Class-Based Approach
 
@@ -208,7 +195,7 @@ console.log(downloader.metadata.title);
 await downloader.download();
 ```
 
-Error Handling
+Error Handling Pattern
 
 ```javascript
 try {
@@ -219,7 +206,7 @@ try {
 }
 ```
 
-Batch Download
+Batch Download Operations
 
 ```javascript
 const { downloadVideo } = require('vidly');
@@ -232,8 +219,19 @@ const urls = [
 
 const results = await Promise.all(urls.map(url => downloadVideo(url)));
 console.log(`Downloaded ${results.length} videos`);
+```
 
-// With progress tracking
+Batch Download with Progress Tracking
+
+```javascript
+const { downloadVideo } = require('vidly');
+
+const urls = [
+  'https://www.tiktok.com/@user/video/1',
+  'https://www.facebook.com/watch?v=2',
+  'https://www.instagram.com/p/3'
+];
+
 const downloadWithProgress = async (url, index) => {
   console.log(`[${index + 1}] Starting download...`);
   const result = await downloadVideo(url);
@@ -244,7 +242,7 @@ const downloadWithProgress = async (url, index) => {
 const results = await Promise.all(urls.map((url, i) => downloadWithProgress(url, i)));
 ```
 
-Custom Directory
+Custom Directory Structure
 
 ```javascript
 const { downloadVideo } = require('vidly');
@@ -254,7 +252,7 @@ const outputDir = path.join(__dirname, 'downloads');
 const result = await downloadVideo(url, path.join(outputDir, 'video.mp4'));
 ```
 
-Stream Download
+Stream API
 
 ```javascript
 const { VideoDownloader } = require('vidly');
@@ -268,7 +266,7 @@ const fileStream = fs.createWriteStream('video.mp4');
 response.body.pipe(fileStream);
 ```
 
-Custom Headers
+Custom HTTP Headers
 
 ```javascript
 const { VideoDownloader } = require('vidly');
@@ -283,7 +281,7 @@ const downloader = new VideoDownloader(url, './video.mp4', {
 await downloader.process();
 ```
 
-Progress Callback
+Progress Callback Integration
 
 ```javascript
 const { downloadVideo } = require('vidly');
@@ -298,25 +296,25 @@ const result = await downloadVideo(url, './video.mp4', {
 
 ---
 
-🌐 Supported Platforms
+Supported Platforms
 
-Platform Status Quality Notes
-TikTok ✅ Full HD/4K No login required
-Facebook ✅ Full HD Public videos only
-Instagram ✅ Full HD Public posts only
-YouTube ✅ Full 4K/8K No API key needed
-Twitter/X ✅ Full HD Public tweets only
-Pinterest ✅ Full HD Public pins only
-Reddit 🚧 Beta HD Coming soon
-LinkedIn 🚧 Beta HD Coming soon
-Telegram 🚧 Beta HD Coming soon
-Snapchat 🚧 Planning HD Coming soon
+Platform Status Quality Requirements
+TikTok Full Support HD/4K No authentication required
+Facebook Full Support HD Public videos only
+Instagram Full Support HD Public posts only
+YouTube Full Support 4K/8K No API key required
+Twitter/X Full Support HD Public tweets only
+Pinterest Full Support HD Public pins only
+Reddit In Development HD Coming soon
+LinkedIn In Development HD Coming soon
+Telegram In Development HD Coming soon
+Snapchat In Development HD Coming soon
 
 ---
 
-⚠️ Error Handling
+Error Handling
 
-Best Practices
+Recommended Implementation
 
 ```javascript
 const { downloadVideo, VideoError } = require('vidly');
@@ -348,51 +346,41 @@ async function safeDownload(url) {
 }
 ```
 
-Retry Logic (Built-in)
+Retry Strategy
 
-vidly includes automatic retry with exponential backoff:
+vidly implements automatic retry with exponential backoff:
 
-```
-Retry 1: 500ms delay
-Retry 2: 1000ms delay
-Retry 3: 2000ms delay
-Retry 4: 4000ms delay
-Retry 5: 8000ms delay
-```
+Attempt Delay
+1 500ms
+2 1000ms
+3 2000ms
+4 4000ms
+5 8000ms
 
 ---
 
-📋 Error Codes
+Error Codes
 
-Code Description Solution
+Code Description Resolution
 E001 No URL provided Pass a valid URL string
-E002 No video data found Check if the URL is valid and accessible
+E002 No video data found Verify URL validity and accessibility
 E003 No downloadable URL available Video may be private or region-locked
 E004 Download failed with HTTP 4xx/5xx Check network connectivity and URL
-E005 File write permission denied Check output directory permissions
+E005 File write permission denied Verify output directory permissions
 E006 Unsupported platform Platform not yet supported
 
 ---
 
-🛠️ Development
+Development
 
 Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/raihan-rifat007/vidly.git
 cd vidly
-
-# Install dependencies
 npm install
-
-# Run tests
 npm test
-
-# Run linting
 npm run lint
-
-# Build for production
 npm run build
 ```
 
@@ -400,44 +388,34 @@ Project Structure
 
 ```
 vidly/
-├── src/
-│   ├── index.js           # Main entry point
-│   ├── downloader.js      # Core download logic
-│   ├── platforms/         # Platform-specific handlers
-│   │   ├── tiktok.js
-│   │   ├── facebook.js
-│   │   ├── instagram.js
-│   │   └── youtube.js
-│   └── utils/
-│       ├── retry.js       # Exponential backoff
-│       └── validator.js   # URL validation
-├── test.js                # Test suite
-├──.gitignore            
+├── scripts/
+│   └── update-deps.js
+├── .github/
+│   ├── dependabot.yml
+│   └── workflows/
+│       ├── daily-version-bump.yml
+│       └── npm-publish.yml
+├── index.js
+├──.gitignore
+├── test.js
+├── README.md
 ├── package.json
-└── README.md
-
+└── LICENSE
 ```
 
 Testing
 
 ```bash
-# Run all tests
-npm test
-
-# Run specific platform tests
-npm test -- --grep TikTok
-
-# Run with coverage
-npm test -- --coverage
-
-# Watch mode
-npm test -- --watch
+npm test                      # Run all tests
+npm test -- --grep TikTok     # Run specific platform tests
+npm test -- --coverage        # Run with coverage
+npm test -- --watch           # Watch mode
 ```
 
 Scripts
 
-Script Description
-npm test Run all tests
+Script Purpose
+npm test Execute test suite
 npm run lint Run ESLint
 npm run format Format code with Prettier
 npm run build Build for production
@@ -445,69 +423,54 @@ npm run update-deps Update dependencies
 
 ---
 
-🤝 Contributing
+Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions are welcome and encouraged.
 
-How to Contribute
+Process
 
 1. Fork the repository
 2. Create a feature branch (git checkout -b feature/amazing)
-3. Commit your changes (git commit -m 'Add amazing feature')
-4. Push to the branch (git push origin feature/amazing)
+3. Commit changes (git commit -m 'Add amazing feature')
+4. Push to branch (git push origin feature/amazing)
 5. Open a Pull Request
 
 Guidelines
 
-· Follow the existing code style
-· Add tests for new features
+· Adhere to existing code style
+· Include tests for new features
 · Update documentation for changes
-· Keep dependencies minimal
-· Ensure CI passes
+· Minimize new dependencies
+· Ensure CI pipeline passes
 
-Reporting Issues
+Issue Reporting
 
-· Use the issue tracker
-· Provide a minimal reproduction
-· Include error logs and platform
+· Use the GitHub issue tracker
+· Provide minimal reproduction steps
+· Include error logs and platform details
 
 ---
 
-📄 License
+License
 
 MIT © raihan07
 
 ---
 
-🔗 Connect
+Connect
 
-<p align="center">
-  <a href="https://github.com/raihan-rifat007">
-    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
-  </a>
-  <a href="https://www.facebook.com/raihan.rifat007">
-    <img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook">
-  </a>
-  <a href="https://www.linkedin.com/in/raihan-rifat">
-    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-  </a>
-  <a href="https://t.me/raihan_rf">
-    <img src="https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram">
-  </a>
-  <a href="mailto:raihan.rifat007@gmail.com">
-    <img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email">
-  </a>
-  <a href="https://www.npmjs.com/~raihan07">
-    <img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm">
-  </a>
-</p>
+Platform Link
+GitHub raihan-rifat007
+Facebook raihan.rifat007
+LinkedIn raihan-rifat
+Telegram raihan_rf
+Email raihan.rifat007@gmail.com
+npm raihan07
 
 ---
 
 <div align="center">
 
 Built for developers, by raihan.
-
-⭐ Star the repo if you find it useful!
 
 </div>
