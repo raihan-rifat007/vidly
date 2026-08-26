@@ -11,7 +11,7 @@ updates:
       prefix: "chore(deps)"
       include: "scope"
     ignore:
-      - dependency-name: "untube"
+      - dependency-name: "@distube/ytdl-core"
         update-types: ["major"]
       - dependency-name: "fs-extra"
         update-types: ["major"]
