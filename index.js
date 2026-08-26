@@ -9,7 +9,8 @@ const CONFIG = {
   DEFAULT_OUTPUT: "video.mp4",
   TIMEOUT: 60000,
   POLL_INTERVAL: 1000,
-  MAX_RETRIES: 3
+  MAX_RETRIES: 3,
+  FORCE_QUALITY: "1080p"
 };
 
 class VideoDownloader {
@@ -19,6 +20,17 @@ class VideoDownloader {
     this.metadata = null;
     this.jobId = null;
     this.formats = [];
+    this.platform = this.detectPlatform(url);
+    this.selectedQuality = CONFIG.FORCE_QUALITY;
+  }
+
+  detectPlatform(url) {
+    if (url.includes("instagram.com") || url.includes("instagr.am")) return "instagram";
+    if (url.includes("facebook.com") || url.includes("fb.watch")) return "facebook";
+    if (url.includes("youtube.com") || url.includes("youtu.be")) return "youtube";
+    if (url.includes("tiktok.com")) return "tiktok";
+    if (url.includes("twitter.com") || url.includes("x.com")) return "twitter";
+    return "unknown";
   }
 
   async fetchMetadata() {
@@ -45,11 +57,44 @@ class VideoDownloader {
       };
 
       this.formats = this.metadata.formats;
+      this.selectBestFormat();
 
       return this.metadata;
     } catch (error) {
       throw new Error(`Failed to fetch metadata: ${error.message}`);
     }
+  }
+
+  selectBestFormat() {
+    const qualityPriority = ["1080p", "720p", "480p", "360p"];
+    let selectedFormat = null;
+
+    for (const quality of qualityPriority) {
+      selectedFormat = this.formats.find(f => {
+        const label = f.label || f.quality || "";
+        const hasVideo = label.includes(quality);
+        const hasAudio = f.ext === "mp4" || f.ext === "mkv";
+        return hasVideo && hasAudio;
+      });
+      if (selectedFormat) break;
+    }
+
+    if (!selectedFormat) {
+      selectedFormat = this.formats.find(f => {
+        const label = f.label || f.quality || "";
+        return label.includes("1080p") || label.includes("720p");
+      });
+    }
+
+    if (!selectedFormat && this.formats.length > 0) {
+      selectedFormat = this.formats[0];
+    }
+
+    if (selectedFormat) {
+      this.selectedQuality = selectedFormat.label || selectedFormat.quality || "best";
+    }
+
+    return selectedFormat;
   }
 
   async download(options = {}) {
@@ -59,12 +104,24 @@ class VideoDownloader {
       await this.fetchMetadata();
     }
 
-    const selectedFormat = formatId
+    let selectedFormat = formatId
       ? this.formats.find(f => f.id === formatId)
-      : this.formats[0];
+      : this.selectBestFormat();
 
     if (!selectedFormat) {
-      throw new Error("No format selected for download");
+      throw new Error("No format found for download");
+    }
+
+    console.log(`[vidly] Selected quality: ${this.selectedQuality}`);
+    console.log(`[vidly] Platform: ${this.platform}`);
+
+    if (this.platform === "instagram") {
+      const audioFormat = this.formats.find(f => 
+        f.ext === "mp3" || f.ext === "m4a" || f.ext === "aac"
+      );
+      if (audioFormat) {
+        selectedFormat = audioFormat;
+      }
     }
 
     try {
@@ -74,7 +131,9 @@ class VideoDownloader {
           url: this.url,
           format: format,
           format_id: selectedFormat.id,
-          title: this.metadata.title
+          title: this.metadata.title,
+          platform: this.platform,
+          quality: this.selectedQuality
         },
         {
           timeout: CONFIG.TIMEOUT,
@@ -132,7 +191,8 @@ class VideoDownloader {
                   duration: this.metadata?.duration || 0,
                   channel: this.metadata?.uploader || "Unknown",
                   type: "video",
-                  quality: "1080p"
+                  platform: this.platform,
+                  quality: this.selectedQuality
                 });
               } else {
                 reject(new Error("Download completed but file not found"));
