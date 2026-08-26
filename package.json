@@ -1,7 +1,7 @@
 {
   "name": "@raihan07/vidly",
-  "version": "11.1.1",
-  "description": "Ultra-fast video and audio downloader with untube engine — supports TikTok, Facebook, Instagram, YouTube, Twitter, Pinterest and more",
+  "version": "11.7.7",
+  "description": "Ultra-fast video downloader with @distube/ytdl-core engine — supports YouTube, TikTok, Facebook, Instagram, Twitter, Pinterest and more",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -12,18 +12,16 @@
     "video-downloader",
     "audio-downloader",
     "media-downloader",
-    "untube",
-    "yt-dlp",
+    "distube",
+    "ytdl-core",
+    "youtube-downloader",
     "tiktok-downloader",
     "facebook-downloader",
     "instagram-downloader",
-    "youtube-downloader",
     "twitter-downloader",
     "pinterest-downloader",
     "download-video",
-    "download-audio",
-    "audio-extractor",
-    "streaming"
+    "download-audio"
   ],
   "author": {
     "name": "raihan07",
@@ -41,7 +39,7 @@
   },
   "homepage": "https://github.com/raihan-rifat007/vidly#readme",
   "dependencies": {
-    "untube": "^2.7.1",
+    "@distube/ytdl-core": "^4.16.12",
     "fs-extra": "^11.4.0"
   },
   "engines": {
