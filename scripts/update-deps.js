@@ -3,7 +3,7 @@ const path = require("path");
 const https = require("https");
 const { execSync } = require("child_process");
 
-const DEPENDENCIES = ["@distube/ytdl-core", "fs-extra"];
+const DEPENDENCIES = ["axios", "fs-extra"];
 
 function fetchLatestVersion(pkg) {
   return new Promise((resolve, reject) => {
