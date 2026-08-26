@@ -4,11 +4,6 @@ node_modules/
 .DS_Store
 *.mp4
 *.mp3
-*.m4a
-*.aac
-*.flac
-*.wav
-*.opus
 *.png
 *.jpg
 *.jpeg
@@ -17,8 +12,3 @@ cache/
 *.lock
 *.tgz
 scripts/node_modules/
-.idea/
-.vscode/
-coverage/
-dist/
-*.tsbuildinfo
