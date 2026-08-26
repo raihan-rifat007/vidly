@@ -5,10 +5,11 @@ const fs = require("fs-extra");
 const path = require("path");
 
 const CONFIG = {
-  API_URL: "https://nayan-video-downloader.vercel.app/alldown",
+  API_BASE: "https://primedownloader.onrender.com",
   DEFAULT_OUTPUT: "video.mp4",
-  TIMEOUT: 30000,
-  MAX_RETRIES: 3
+  TIMEOUT: 60000,
+  MAX_RETRIES: 3,
+  POLL_INTERVAL: 1000
 };
 
 class VideoDownloader {
@@ -16,97 +17,155 @@ class VideoDownloader {
     this.url = url;
     this.outputPath = path.resolve(outputPath);
     this.metadata = null;
-    this.downloadUrl = null;
+    this.jobId = null;
+    this.formats = [];
   }
 
   async fetchMetadata() {
     try {
-      const apiUrl = `${CONFIG.API_URL}?url=${encodeURIComponent(this.url)}`;
-      const response = await axios.get(apiUrl, {
-        timeout: CONFIG.TIMEOUT
-      });
+      const response = await axios.post(
+        `${CONFIG.API_BASE}/api/info`,
+        { url: this.url },
+        {
+          timeout: CONFIG.TIMEOUT,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
 
-      if (!response.data || !response.data.data) {
-        throw new Error("No video data found for the provided URL.");
+      if (response.data.error) {
+        throw new Error(response.data.error);
       }
 
-      const { title, high, low } = response.data.data;
       this.metadata = {
-        title: title || "Downloaded Video",
-        highQuality: high || null,
-        lowQuality: low || null
+        title: response.data.title || "Downloaded Video",
+        duration: response.data.duration || 0,
+        thumbnail: response.data.thumbnail || null,
+        uploader: response.data.uploader || "Unknown",
+        formats: response.data.formats || []
       };
 
-      this.downloadUrl = this.metadata.highQuality || this.metadata.lowQuality;
-
-      if (!this.downloadUrl) {
-        throw new Error("No downloadable video URL found.");
-      }
+      this.formats = this.metadata.formats;
 
       return this.metadata;
     } catch (error) {
-      throw new Error(`Failed to fetch video metadata: ${error.message}`);
+      throw new Error(`Failed to fetch metadata: ${error.message}`);
     }
   }
 
   async download(options = {}) {
-    if (!this.downloadUrl) {
+    const { format = "video", formatId = null, progress = false } = options;
+
+    if (!this.metadata) {
       await this.fetchMetadata();
     }
 
-    const { progress = false } = options;
-    const outputDir = path.dirname(this.outputPath);
-    await fs.ensureDir(outputDir);
+    const selectedFormat = formatId
+      ? this.formats.find(f => f.id === formatId)
+      : this.formats[0];
+
+    if (!selectedFormat) {
+      throw new Error("No format selected for download");
+    }
+
+    try {
+      const response = await axios.post(
+        `${CONFIG.API_BASE}/api/download`,
+        {
+          url: this.url,
+          format: format,
+          format_id: selectedFormat.id,
+          title: this.metadata.title
+        },
+        {
+          timeout: CONFIG.TIMEOUT,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
+
+      this.jobId = response.data.job_id;
+
+      if (!this.jobId) {
+        throw new Error("No job ID returned");
+      }
+
+      return await this.waitForDownload(progress);
+    } catch (error) {
+      throw new Error(`Download failed: ${error.message}`);
+    }
+  }
+
+  async waitForDownload(progress = false) {
+    let lastProgress = 0;
+    const startTime = Date.now();
 
     return new Promise((resolve, reject) => {
-      axios({
-        method: "GET",
-        url: this.downloadUrl,
-        responseType: "stream",
-        timeout: 60000
-      })
-      .then((response) => {
-        const totalLength = parseInt(response.headers["content-length"], 10);
-        let downloaded = 0;
-        const writer = fs.createWriteStream(this.outputPath);
-        let lastProgress = 0;
-        const startTime = Date.now();
+      const checkStatus = async () => {
+        try {
+          const response = await axios.get(
+            `${CONFIG.API_BASE}/api/status/${this.jobId}`,
+            { timeout: CONFIG.TIMEOUT }
+          );
 
-        response.data.on("data", (chunk) => {
-          downloaded += chunk.length;
-          if (progress) {
-            const percent = totalLength > 0 ? (downloaded / totalLength) * 100 : 0;
-            if (Math.floor(percent) > Math.floor(lastProgress)) {
-              const speed = (downloaded / 1024 / 1024 / ((Date.now() - startTime) / 1000)).toFixed(1);
-              console.log(`Progress: ${percent.toFixed(0)}% | Speed: ${speed} MB/s`);
-              lastProgress = percent;
+          const data = response.data;
+
+          if (data.status === "done") {
+            const fileResponse = await axios({
+              method: "GET",
+              url: `${CONFIG.API_BASE}/api/file/${this.jobId}`,
+              responseType: "stream",
+              timeout: CONFIG.TIMEOUT
+            });
+
+            const writer = fs.createWriteStream(this.outputPath);
+            fileResponse.data.pipe(writer);
+
+            writer.on("finish", () => {
+              if (fs.existsSync(this.outputPath)) {
+                resolve({
+                  title: this.metadata?.title || "Downloaded Video",
+                  filePath: this.outputPath,
+                  size: fs.statSync(this.outputPath).size,
+                  duration: this.metadata?.duration || 0,
+                  channel: this.metadata?.uploader || "Unknown",
+                  type: "video"
+                });
+              } else {
+                reject(new Error("Download completed but file not found"));
+              }
+            });
+
+            writer.on("error", reject);
+            return;
+          }
+
+          if (data.status === "error") {
+            reject(new Error(data.error || "Download failed"));
+            return;
+          }
+
+          if (progress && data.progress) {
+            const pct = Math.floor(data.progress);
+            if (pct > lastProgress) {
+              const elapsed = (Date.now() - startTime) / 1000;
+              const speed = elapsed > 0
+                ? (data.progress / 1024 / 1024 / elapsed).toFixed(1)
+                : 0;
+              console.log(`Progress: ${pct}% | Speed: ${speed} MB/s`);
+              lastProgress = pct;
             }
           }
-        });
 
-        response.data.pipe(writer);
+          setTimeout(checkStatus, CONFIG.POLL_INTERVAL);
+        } catch (error) {
+          reject(new Error(`Status check failed: ${error.message}`));
+        }
+      };
 
-        writer.on("finish", () => {
-          if (fs.existsSync(this.outputPath)) {
-            resolve({
-              title: this.metadata?.title || "Downloaded Video",
-              filePath: this.outputPath,
-              size: fs.statSync(this.outputPath).size,
-              duration: this.metadata?.duration || 0,
-              channel: this.metadata?.channel || "Unknown",
-              type: "video"
-            });
-          } else {
-            reject(new Error("Download completed but file not found"));
-          }
-        });
-
-        writer.on("error", reject);
-        response.data.on("error", reject);
-      })
-      .catch((error) => {
-        reject(new Error(`Download failed: ${error.message}`));
-      });
+      checkStatus();
     });
   }
 
@@ -117,7 +176,7 @@ class VideoDownloader {
 
   static async downloadVideo(url, outputPath = CONFIG.DEFAULT_OUTPUT, options = {}) {
     const downloader = new VideoDownloader(url, outputPath);
-    return await downloader.process(options);
+    return await downloader.process({ ...options, format: "video" });
   }
 
   static async getInfo(url) {
@@ -131,4 +190,3 @@ module.exports = {
   downloadVideo: VideoDownloader.downloadVideo,
   getInfo: VideoDownloader.getInfo
 };
-
