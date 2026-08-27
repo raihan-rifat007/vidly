@@ -59,7 +59,7 @@ Designed for developers building bots, automation pipelines, media tools, and we
 ## Installation
 
 ```bash
-npm install vidly
+npm install @raihan07/vidly
 ```
 
 ---
@@ -67,7 +67,7 @@ npm install vidly
 Quick Start
 
 ```javascript
-const { downloadVideo } = require('vidly');
+const { downloadVideo } = require('@raihan07/vidly');
 
 (async () => {
   const result = await downloadVideo('https://www.tiktok.com/@user/video/123456789');
@@ -128,7 +128,7 @@ Advanced Usage
 Class-Based Approach
 
 ```javascript
-const { VideoDownloader } = require('vidly');
+const { VideoDownloader } = require('@raihan07/vidly');
 
 const downloader = new VideoDownloader(
   'https://www.instagram.com/p/ABC123/',
@@ -153,7 +153,7 @@ try {
 Batch Download
 
 ```javascript
-const { downloadVideo } = require('vidly');
+const { downloadVideo } = require('@raihan07/vidly');
 
 const urls = [
   'https://www.tiktok.com/@user/video/1',
