@@ -1,6 +1,6 @@
 {
   "name": "@raihan07/vidly",
-  "version": "13.0.1",
+  "version": "13.0.2",
   "description": "Universal video downloader powered by Nayan API — YouTube, Facebook, Instagram, TikTok, 1000+ platforms with audio support",
   "main": "index.js",
   "type": "commonjs",
